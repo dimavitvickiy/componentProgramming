@@ -8,3 +8,18 @@ DB_ENGINE = POSTGRESQL_ENGINE
 
 
 CONNECTION = f'{DB_ENGINE}+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}'
+
+
+UKRAINIAN_LANGUAGE = 'Ukrainian'
+RUSSIAN_LANGUAGE = 'Russian'
+
+LANGUAGE = RUSSIAN_LANGUAGE
+
+
+def set_language(language):
+    global LANGUAGE
+    LANGUAGE = language
+
+
+def get_language():
+    return LANGUAGE
