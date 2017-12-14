@@ -3,6 +3,7 @@ from tkinter import ttk
 
 from models.employee import Employee
 from models.subdivision import Subdivision
+from services.localization.localization import translate_
 
 
 class AddEmployeeComponent(tk.Toplevel):
@@ -16,21 +17,21 @@ class AddEmployeeComponent(tk.Toplevel):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
-        self.title('Добавить нового сотрудника')
+        self.title(translate_('add_new_employee'))
 
         self.set_widgets()
         self.grid_widgets()
 
     def set_widgets(self):
-        self.last_name_label = ttk.Label(self, text='Фамилия: ')
+        self.last_name_label = ttk.Label(self, text=translate_('last_name'))
         self.last_name_entry = ttk.Entry(self, font="Helvetica 14")
-        self.first_name_label = ttk.Label(self, text='Имя: ')
+        self.first_name_label = ttk.Label(self, text=translate_('first_name'))
         self.first_name_entry = ttk.Entry(self, font="Helvetica 14")
-        self.subdivision_name_label = ttk.Label(self, text='Подразделение: ')
+        self.subdivision_name_label = ttk.Label(self, text=translate_('subdivision'))
         self.subdivision_name_select = tk.Listbox(self, font="Helvetica 14")
         self.fill_select_items()
-        self.error_message = ttk.Label(self, text="Все поля должны быть заполнены", font="Helvetica 14")
-        self.save_button = ttk.Button(self, text='Сохранить', command=self.on_save)
+        self.error_message = ttk.Label(self, text=translate_('error'), font="Helvetica 14")
+        self.save_button = ttk.Button(self, text=translate_('save'), command=self.on_save)
 
     def grid_widgets(self):
         self.last_name_label.grid(row=0, column=0, padx=10, pady=10, sticky=tk.W)

@@ -2,8 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 
 from add_employee_component import AddEmployeeComponent
+from config import UKRAINIAN_LANGUAGE, set_language, RUSSIAN_LANGUAGE, get_language
 from models import Base, engine
 from models.employee import Employee
+from services.localization.localization import translate_
 from table import Table
 
 
@@ -31,11 +33,12 @@ class Application(tk.Frame):
 
     def set_widgets(self):
         self.entry = ttk.Entry(self, font="Helvetica 14")
-        self.button = ttk.Button(self, text='Поиск', command=self.on_search)
+        self.button = ttk.Button(self, text=translate_('search'), command=self.on_search)
+        self.change_language_button = ttk.Button(self, text=translate_('change_language'), command=self.change_language)
         self.table = Table(headers=TABLE_HEADERS, master=self)
         self.add_employee_button = ttk.Button(
             self,
-            text='Добавить',
+            text=translate_('add_new_employee'),
             command=self.create_add_employee_window,
         )
 
@@ -45,6 +48,7 @@ class Application(tk.Frame):
 
         self.entry.grid(row=0, column=0, padx=20, sticky=tk.EW)
         self.button.grid(row=0, column=1, padx=20, pady=10, sticky=tk.EW)
+        self.change_language_button.grid(row=1, column=2, padx=20, pady=10, sticky=tk.EW)
         self.add_employee_button.grid(row=0, column=2, padx=20, pady=10, sticky=tk.EW)
         self.table.grid(row=2, column=0, columnspan=2, padx=20, pady=20, sticky=tk.NSEW)
 
@@ -77,6 +81,18 @@ class Application(tk.Frame):
     def create_add_employee_window(self):
         self.add_employee_component = AddEmployeeComponent(self)
         self.add_employee_component.mainloop()
+
+    def change_language(self):
+        language = RUSSIAN_LANGUAGE if get_language() == UKRAINIAN_LANGUAGE else UKRAINIAN_LANGUAGE
+        set_language(language)
+        self.destroy_and_rebuild()
+        self.update_table_data()
+
+    def destroy_and_rebuild(self):
+        for child in self.winfo_children():
+            child.destroy()
+        self.set_widgets()
+        self.grid_widgets()
 
 
 if __name__ == '__main__':
