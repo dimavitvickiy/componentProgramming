@@ -1,108 +1,61 @@
-from models.abstract import DBAbstraction
-from services.db import db
+import six as six
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from config import DB_ENGINE, POSTGRESQL_ENGINE
+from models import Base, session
+from models.abstract import AbstractModel
 
 
-class Employee:
-    def __init__(self, id_, first_name, last_name, subdivision):
-        self.id = id_
-        self.first_name = first_name
-        self.last_name = last_name
-        self.subdivision = subdivision
+class EmployeePostgres(Base, AbstractModel):
+    __tablename__ = 'employees'
 
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String)
+    last_name = Column(String)
+    subdivision_id = Column(Integer, ForeignKey('subdivisions.id'))
+    subdivision = relationship("SubdivisionPostgres", back_populates="employee_list")
 
-class EmployeeDB(DBAbstraction):
-    GET_LIST_QUERY = '''
-        SELECT employees.id, first_name, last_name, subdivisions.name AS subdivision
-        FROM employees JOIN subdivisions ON subdivisions.id = employees.subdivision_id
-        {where_cause}
-        ORDER BY employees.id;
-    '''
-    GET_ENTITY_QUERY = '''
-        SELECT employees.id, first_name, last_name, name as subdivision
-        FROM employees JOIN subdivisions ON employees.subdivision_id = subdivisions.id
-        WHERE employees.id = '{}';
-    '''
-    CREATE_QUERY = '''
-        INSERT INTO employees (first_name, last_name, subdivision_id)
-        VALUES ('{}', '{}', (select id from subdivisions where name='{}'))
-        RETURNING employees.id;
-    '''
-    UPDATE_QUERY = '''
-        UPDATE employees 
-        SET first_name = '{}', last_name = '{}', subdivision_id = (select id from subdivisions where name='{}')
-        WHERE id = '{}'
-    '''
-    DELETE_QUERY = '''
-        DELETE FROM employees 
-        WHERE id = '{}'
-    '''
+    def __repr__(self):
+        return f'<Employee(first_name={self.first_name}, last_name={self.last_name})>'
 
     @classmethod
-    def get_list(cls, **kwargs):
-        where_cause = build_where(kwargs)
-        employee_list = db.retrieve(cls.GET_LIST_QUERY.format(where_cause=where_cause), many=True)
-        return [
-            Employee(
-                employee['id'],
-                employee['first_name'],
-                employee['last_name'],
-                employee['subdivision'],
-            ) for employee in employee_list
-        ]
+    def get_list(cls, *args, **kwargs):
+        return session.query(cls).all()
 
     @classmethod
-    def get(cls, employee_id):
-        employee = db.retrieve(cls.GET_ENTITY_QUERY.format(employee_id), many=False)
-        return Employee(
-            employee['id'],
-            employee['first_name'],
-            employee['last_name'],
-            employee['subdivision'],
+    def get_entity(cls, employee_id, *args, **kwargs):
+        return session.query(cls).filter_by(id=employee_id).one_or_none()
+
+    @classmethod
+    def update(cls, employee_id, *args, first_name=None, last_name=None, subdivision=None, **kwargs):
+        employee = cls.get_entity(employee_id)
+        employee.first_name = first_name or employee.first_name
+        employee.last_name = last_name or employee.last_name
+        employee.subdivision = subdivision or employee.subdivision
+        session.commit()
+        return employee
+
+    @classmethod
+    def create(cls, first_name, last_name, subdivision, *args, **kwargs):
+        employee = cls(
+            first_name=first_name,
+            last_name=last_name,
+            subdivision=subdivision
         )
+        session.add(employee)
+        session.commit()
+        return employee
 
     @classmethod
-    def create(cls, employee):
-        new_employee_id = db.modify(
-            cls.CREATE_QUERY.format(
-                employee.first_name,
-                employee.last_name,
-                employee.subdivision,
-            )
-        )
-        return new_employee_id
-
-    @classmethod
-    def delete(cls, employee_id):
-        db.modify(cls.DELETE_QUERY.format(employee_id))
-
-    @classmethod
-    def update(cls, employee, first_name=None, last_name=None, subdivision=None):
-        first_name = first_name or employee.first_name
-        last_name = last_name or employee.last_name
-        subdivision = subdivision or employee.subdivision
-        db.modify(
-            cls.UPDATE_QUERY.format(
-                first_name,
-                last_name,
-                subdivision,
-                employee.id
-            )
-        )
+    def delete(cls, employee_id, *args, **kwargs):
+        employee = cls.get_entity(employee_id)
+        session.delete(employee)
+        session.commit()
 
 
-def build_where(where):
-    if where:
-        WHERE = 'where '
-        where_string = WHERE
-        for key, value in where.items():
-            if where_string != WHERE:
-                where_string += "and "
-            where_string += "{key}='{value}'".format(key=key, value=value)
-        return where_string
-    return ''
+Employees = {
+    POSTGRESQL_ENGINE: EmployeePostgres,
+}
 
-
-if __name__ == '__main__':
-    employee = Employee(None, 'a', 'b', 'Отдел Разработки')
-    returned_value = EmployeeDB.create(employee)
-    print(returned_value)
+Employee = Employees[DB_ENGINE]

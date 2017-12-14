@@ -1,74 +1,64 @@
-from models.abstract import DBAbstraction
-from services.db import db
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
+
+from config import DB_ENGINE, POSTGRESQL_ENGINE
+from models import Base, session
+from models.abstract import AbstractModel
 
 
-class Subdivision:
-    def __init__(self, id_, name):
-        self.id = id_
-        self.name = name
+class SubdivisionPostgres(Base, AbstractModel):
+    __tablename__ = 'subdivisions'
 
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)
 
-class SubdivisionDB(DBAbstraction):
-    GET_LIST_QUERY = '''
-        SELECT id, name
-        FROM subdivisions
-    '''
-    GET_ENTITY_QUERY = '''
-        SELECT id, name
-        FROM subdivisions
-        WHERE id = {};
-    '''
-    CREATE_QUERY = '''
-        INSERT INTO subdivisions (name)
-        VALUES ({})
-        RETURNING id;
-    '''
-    UPDATE_QUERY = '''
-        UPDATE subdivisions 
-        SET name = {}
-        WHERE id = {}
-    '''
-    DELETE_QUERY = '''
-        DELETE FROM subdivisions
-        WHERE id = {}
-    '''
+    employee_list = relationship("EmployeePostgres", back_populates="subdivision",
+                             cascade="all, delete, delete-orphan")
+
+    def __repr__(self):
+        return f'<Subdivision(name={self.name})>'
 
     @classmethod
-    def get_list(cls):
-        subdivision_list = db.retrieve(cls.GET_LIST_QUERY, many=True)
-        return [
-            Subdivision(
-                subdivision['id'],
-                subdivision['name'],
-            ) for subdivision in subdivision_list
-        ]
+    def get_list(cls, *args, **kwargs):
+        return session.query(cls).all()
 
     @classmethod
-    def get(cls, subdivision_id):
-        subdivision = db.retrieve(cls.GET_ENTITY_QUERY.format(subdivision_id), many=False)
-        return Subdivision(
-            subdivision['id'],
-            subdivision['name'],
+    def get_entity(cls, id_=None, name=None, *args, **kwargs):
+        if not (id_ or name):
+            raise AttributeError
+
+        query = session.query(cls)
+        if id_:
+            query = query.filter_by(id=id_)
+        if name:
+            query = query.filter_by(name=name)
+        return query.one_or_none()
+
+    @classmethod
+    def update(cls, id_, *args, name=None, **kwargs):
+        subdivision = cls.get_entity(id_)
+        subdivision.name = name or subdivision.name
+        session.commit()
+        return subdivision
+
+    @classmethod
+    def create(cls, name, *args, **kwargs):
+        subdivision = cls(
+            name=name,
         )
+        session.add(subdivision)
+        session.commit()
+        return subdivision
 
     @classmethod
-    def create(cls, subdivision):
-        db.modify(
-            cls.CREATE_QUERY.format(
-                subdivision.name,
-            )
-        )
+    def delete(cls, id_, *args, **kwargs):
+        subdivision = cls.get_entity(id_)
+        session.delete(subdivision)
+        session.commit()
 
-    @classmethod
-    def delete(cls, subdivision_id):
-        db.modify(cls.DELETE_QUERY.format(subdivision_id))
 
-    @classmethod
-    def update(cls, subdivision, name=None):
-        name = name or subdivision.name
-        db.modify(
-            cls.UPDATE_QUERY.format(
-                name,
-                subdivision.id
-            )
-        )
+Subdivisions = {
+    POSTGRESQL_ENGINE: SubdivisionPostgres,
+}
+
+Subdivision = Subdivisions[DB_ENGINE]

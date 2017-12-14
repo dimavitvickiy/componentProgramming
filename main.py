@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 
 from add_employee_component import AddEmployeeComponent
-from models.employee import EmployeeDB
+from models import Base, engine
+from models.employee import Employee
 from table import Table
 
 
@@ -50,27 +51,27 @@ class Application(tk.Frame):
     def on_search(self):
         search_text = self.entry.get()
         self.table.clear()
-        for employee in EmployeeDB.get_list():
-            if search_text in employee.subdivision:
+        for employee in Employee.get_list():
+            if search_text in employee.subdivision.name:
                 self.table.build_raw(
                     employee.id,
-                    '{} {}'.format(employee.last_name, employee.first_name),
-                    employee.subdivision,
+                    f'{employee.last_name} {employee.first_name}',
+                    employee.subdivision.name,
                 )
 
     def update_table_data(self):
-        for employee in EmployeeDB.get_list(first_name='Дмитрий', last_name='Витвицкий'):
+        for employee in Employee.get_list():
             self.table.build_raw(
                 employee.id,
-                '{} {}'.format(employee.last_name, employee.first_name),
-                employee.subdivision,
+                f'{employee.last_name} {employee.first_name}',
+                employee.subdivision.name,
             )
 
     def add_table_data(self, employee):
         self.table.build_raw(
             employee.id,
-            '{} {}'.format(employee.last_name, employee.first_name),
-            employee.subdivision,
+            f'{employee.last_name} {employee.first_name}',
+            employee.subdivision.name,
         )
 
     def create_add_employee_window(self):
@@ -79,5 +80,7 @@ class Application(tk.Frame):
 
 
 if __name__ == '__main__':
+    Base.metadata.create_all(engine)
+
     app = Application()
     app.mainloop()
