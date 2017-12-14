@@ -1,15 +1,22 @@
-class DBAbstraction:
-    def get_list(self):
+
+
+class AbstractModel:
+    @classmethod
+    def get_list(cls, *args, **kwargs):
         raise NotImplementedError
 
-    def get(self, entity_id):
-        pass
+    @classmethod
+    def create(cls, *args, **kwargs):
+        raise NotImplementedError
 
-    def update(self, entity_id, **kwargs):
-        pass
+    @classmethod
+    def update(cls, *args, **kwargs):
+        raise NotImplementedError
 
-    def delete(self, entity_id):
-        pass
+    @classmethod
+    def delete(cls, *args, **kwargs):
+        raise NotImplementedError
 
-    def create(self, **kwargs):
-        pass
+    @classmethod
+    def get_entity(cls, *args, **kwargs):
+        raise NotImplementedError

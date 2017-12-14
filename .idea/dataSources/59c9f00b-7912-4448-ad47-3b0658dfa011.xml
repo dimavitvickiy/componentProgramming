@@ -10,130 +10,125 @@
     <database id="3" parent="1" name="enterprise">
       <ObjectId>16384</ObjectId>
     </database>
-    <schema id="4" parent="2" name="public">
+    <database id="4" parent="1" name="fitnessTracker">
+      <ObjectId>16406</ObjectId>
+    </database>
+    <schema id="5" parent="2" name="public">
       <ObjectId>2200</ObjectId>
-      <IntrospectionTimestamp>2017-11-24.01:03:27.186</IntrospectionTimestamp>
-      <IntrospectionStateNumber>736</IntrospectionStateNumber>
+      <IntrospectionTimestamp>2017-12-14.21:55:18.229</IntrospectionTimestamp>
+      <IntrospectionStateNumber>770</IntrospectionStateNumber>
       <Current>1</Current>
       <Visible>1</Visible>
     </schema>
-    <schema id="5" parent="2" name="pg_catalog">
+    <schema id="6" parent="2" name="pg_catalog">
       <ObjectId>11</ObjectId>
     </schema>
-    <schema id="6" parent="2" name="pg_toast">
+    <schema id="7" parent="2" name="pg_toast">
       <ObjectId>99</ObjectId>
     </schema>
-    <schema id="7" parent="2" name="pg_temp_1">
+    <schema id="8" parent="2" name="pg_temp_1">
       <ObjectId>11215</ObjectId>
     </schema>
-    <schema id="8" parent="2" name="pg_toast_temp_1">
+    <schema id="9" parent="2" name="pg_toast_temp_1">
       <ObjectId>11216</ObjectId>
     </schema>
-    <schema id="9" parent="2" name="information_schema">
+    <schema id="10" parent="2" name="information_schema">
       <ObjectId>11520</ObjectId>
     </schema>
-    <sequence id="10" parent="4" name="employees_id_seq">
-      <ObjectId>16403</ObjectId>
-      <StateNumber>735</StateNumber>
+    <sequence id="11" parent="5" name="employees_id_seq">
+      <ObjectId>16438</ObjectId>
+      <StateNumber>770</StateNumber>
       <SequenceIdentity>1</SequenceIdentity>
       <BelongsToColumn>1</BelongsToColumn>
     </sequence>
-    <table id="11" parent="4" name="employees">
-      <ObjectId>16392</ObjectId>
-      <StateNumber>725</StateNumber>
+    <sequence id="12" parent="5" name="subdivisions_id_seq">
+      <ObjectId>16425</ObjectId>
+      <StateNumber>769</StateNumber>
+      <SequenceIdentity>1</SequenceIdentity>
+      <BelongsToColumn>1</BelongsToColumn>
+    </sequence>
+    <table id="13" parent="5" name="employees">
+      <ObjectId>16440</ObjectId>
+      <StateNumber>770</StateNumber>
     </table>
-    <table id="12" parent="4" name="subdivisions">
-      <ObjectId>16385</ObjectId>
-      <StateNumber>725</StateNumber>
+    <table id="14" parent="5" name="subdivisions">
+      <ObjectId>16427</ObjectId>
+      <StateNumber>770</StateNumber>
     </table>
-    <column id="13" parent="11" name="id">
+    <column id="15" parent="13" name="id">
       <Position>1</Position>
       <DataType>integer|0</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>736</StateNumber>
+      <StateNumber>770</StateNumber>
       <SequenceName>employees_id_seq</SequenceName>
       <DefaultExpression>nextval(&apos;employees_id_seq&apos;::regclass)</DefaultExpression>
     </column>
-    <column id="14" parent="11" name="first_name">
+    <column id="16" parent="13" name="first_name">
       <Position>2</Position>
-      <DataType>varchar(120)|0</DataType>
-      <StateNumber>723</StateNumber>
+      <DataType>varchar|0</DataType>
+      <StateNumber>770</StateNumber>
     </column>
-    <column id="15" parent="11" name="last_name">
+    <column id="17" parent="13" name="last_name">
       <Position>3</Position>
-      <DataType>varchar(120)|0</DataType>
-      <StateNumber>723</StateNumber>
+      <DataType>varchar|0</DataType>
+      <StateNumber>770</StateNumber>
     </column>
-    <column id="16" parent="11" name="phone_number">
+    <column id="18" parent="13" name="subdivision_id">
       <Position>4</Position>
-      <DataType>varchar(20)|0</DataType>
-      <StateNumber>723</StateNumber>
-    </column>
-    <column id="17" parent="11" name="salary">
-      <Position>5</Position>
-      <DataType>real|0</DataType>
-      <StateNumber>723</StateNumber>
-    </column>
-    <column id="18" parent="11" name="is_working">
-      <Position>6</Position>
-      <DataType>boolean|0</DataType>
-      <StateNumber>723</StateNumber>
-      <DefaultExpression>true</DefaultExpression>
-    </column>
-    <column id="19" parent="11" name="subdivision_id">
-      <Position>7</Position>
       <DataType>integer|0</DataType>
-      <StateNumber>724</StateNumber>
+      <StateNumber>770</StateNumber>
     </column>
-    <index id="20" parent="11" name="employees_pkey">
-      <ObjectId>16396</ObjectId>
+    <index id="19" parent="13" name="employees_pkey">
+      <ObjectId>16447</ObjectId>
       <ColNames>id</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="21" parent="11" name="employees_pkey">
-      <ObjectId>16397</ObjectId>
+    <key id="20" parent="13" name="employees_pkey">
+      <ObjectId>16448</ObjectId>
       <ColNames>id</ColNames>
       <UnderlyingIndexName>employees_pkey</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="22" parent="11" name="employees_subdivision_id_fkey">
-      <ObjectId>16398</ObjectId>
+    <foreign-key id="21" parent="13" name="employees_subdivision_id_fkey">
+      <ObjectId>16449</ObjectId>
       <ColNames>subdivision_id</ColNames>
-      <RefTableId>16385</RefTableId>
+      <RefTableId>16427</RefTableId>
       <RefColPositions>1</RefColPositions>
       <RefTableName>subdivisions</RefTableName>
       <RefKeyName>subdivisions_pkey</RefKeyName>
       <RefColNames>id</RefColNames>
     </foreign-key>
-    <column id="23" parent="12" name="id">
+    <column id="22" parent="14" name="id">
       <Position>1</Position>
       <DataType>integer|0</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>722</StateNumber>
+      <StateNumber>769</StateNumber>
+      <SequenceName>subdivisions_id_seq</SequenceName>
+      <DefaultExpression>nextval(&apos;subdivisions_id_seq&apos;::regclass)</DefaultExpression>
     </column>
-    <column id="24" parent="12" name="name">
+    <column id="23" parent="14" name="name">
       <Position>2</Position>
-      <DataType>varchar(120)|0</DataType>
-      <StateNumber>722</StateNumber>
+      <DataType>varchar|0</DataType>
+      <StateNumber>769</StateNumber>
     </column>
-    <index id="25" parent="12" name="subdivisions_pkey">
-      <ObjectId>16388</ObjectId>
+    <index id="24" parent="14" name="subdivisions_pkey">
+      <ObjectId>16434</ObjectId>
       <ColNames>id</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="26" parent="12" name="subdivisions_name_key">
-      <ObjectId>16390</ObjectId>
+    <index id="25" parent="14" name="subdivisions_name_key">
+      <ObjectId>16436</ObjectId>
       <ColNames>name</ColNames>
       <Unique>1</Unique>
     </index>
-    <key id="27" parent="12" name="subdivisions_pkey">
-      <ObjectId>16389</ObjectId>
+    <key id="26" parent="14" name="subdivisions_pkey">
+      <ObjectId>16435</ObjectId>
       <ColNames>id</ColNames>
       <UnderlyingIndexName>subdivisions_pkey</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <key id="28" parent="12" name="subdivisions_name_key">
-      <ObjectId>16391</ObjectId>
+    <key id="27" parent="14" name="subdivisions_name_key">
+      <ObjectId>16437</ObjectId>
       <ColNames>name</ColNames>
       <UnderlyingIndexName>subdivisions_name_key</UnderlyingIndexName>
     </key>
