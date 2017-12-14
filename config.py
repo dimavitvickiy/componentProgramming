@@ -1,6 +1,6 @@
 HOST = '127.0.0.1'
 PORT = 5432
-DB_NAME = 'enterprise'
+DB_NAME = 'postgres'
 USER = 'postgres'
 PASSWORD = 'ma1der996'
 POSTGRESQL_ENGINE = 'postgresql'

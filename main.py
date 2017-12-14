@@ -56,7 +56,7 @@ class Application(tk.Frame):
                 self.table.build_raw(
                     employee.id,
                     f'{employee.last_name} {employee.first_name}',
-                    employee.subdivision,
+                    employee.subdivision.name,
                 )
 
     def update_table_data(self):
@@ -64,14 +64,14 @@ class Application(tk.Frame):
             self.table.build_raw(
                 employee.id,
                 f'{employee.last_name} {employee.first_name}',
-                employee.subdivision,
+                employee.subdivision.name,
             )
 
     def add_table_data(self, employee):
         self.table.build_raw(
             employee.id,
             f'{employee.last_name} {employee.first_name}',
-            employee.subdivision,
+            employee.subdivision.name,
         )
 
     def create_add_employee_window(self):
