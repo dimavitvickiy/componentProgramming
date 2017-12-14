@@ -46,7 +46,7 @@ class EmployeeDB(DBAbstraction):
                 employee['id'],
                 employee['first_name'],
                 employee['last_name'],
-                employee['subdivision'],x`
+                employee['subdivision'],
             ) for employee in employee_list
         ]
 
