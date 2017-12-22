@@ -20,8 +20,20 @@ class EmployeePostgres(Base, AbstractModel):
         return f'<Employee(first_name={self.first_name}, last_name={self.last_name})>'
 
     @classmethod
-    def get_list(cls, *args, **kwargs):
-        return session.query(cls).all()
+    def number_employees(cls):
+        return session.query(cls).count()
+
+    @classmethod
+    async def get_list(cls, limit=5000, offset=None, *args, **kwargs):
+        query = session.query(cls).limit(limit)
+        if offset:
+            query = query.offset(offset)
+        result = await cls.fetch(query)
+        return result
+
+    @classmethod
+    async def fetch(cls, query):
+        return query.all()
 
     @classmethod
     def get_entity(cls, employee_id, *args, **kwargs):

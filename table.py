@@ -16,7 +16,7 @@ class Table(ttk.Treeview):
             self.column(header['column'], width=300, anchor=tk.CENTER)
             self.heading(header['column'], text=header['name'])
 
-    def build_raw(self, *values):
+    async def build_raw(self, *values):
         self.insert('', self.__index, text=values[0], values=tuple(values[1:]))
         self.__index += 1
 
