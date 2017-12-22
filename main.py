@@ -1,3 +1,4 @@
+import pickle
 import tkinter as tk
 from tkinter import ttk
 
@@ -36,8 +37,15 @@ class Application(tk.Frame):
     def set_widgets(self):
         self.load_button = ttk.Button(self, text='Загрузить таблицу', command=self.update_table_data)
         self.entry = ttk.Entry(self, font="Helvetica 14")
+        try:
+            with open('cache.pickle', 'rb') as f:
+                self.entry.delete(0, tk.END)
+                self.entry.insert(0, pickle.load(f))
+        except FileNotFoundError:
+            pass
         self.button = ttk.Button(self, text=translate_('search'), command=self.on_search)
         self.change_language_button = ttk.Button(self, text=translate_('change_language'), command=self.change_language)
+        self.serialize_button = ttk.Button(self, text='Сериализировать данные', command=self.serialize)
         self.table = Table(headers=TABLE_HEADERS, master=self)
         self.add_employee_button = ttk.Button(
             self,
@@ -48,7 +56,7 @@ class Application(tk.Frame):
     def grid_widgets(self):
         style = ttk.Style()
         style.theme_use('clam')
-
+        self.serialize_button.grid(row=1, column=1)
         self.entry.grid(row=0, column=0, padx=20, sticky=tk.EW)
         self.button.grid(row=0, column=1, padx=20, pady=10, sticky=tk.EW)
         self.change_language_button.grid(row=1, column=2, padx=20, pady=10, sticky=tk.EW)
@@ -85,6 +93,10 @@ class Application(tk.Frame):
                     f'{employee.last_name} {employee.first_name}',
                     employee.subdivision.name,
                 )
+
+    def serialize(self):
+        with open('cache.pickle', 'wb') as f:
+            pickle.dump(self.entry.get(), f)
 
     def update_table_data(self):
         self.table.clear()
