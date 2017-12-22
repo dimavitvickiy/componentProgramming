@@ -64,6 +64,7 @@ class Application(tk.Frame):
                 )
 
     def update_table_data(self):
+        self.table.clear()
         number = Employee.number_employees()
         part1 = 0
         part2 = number / 5 + part1
@@ -71,7 +72,7 @@ class Application(tk.Frame):
         part4 = number / 5 + part3
         part5 = number / 5 + part4
         loop = asyncio.get_event_loop()
-        result = loop.run_until_complete(
+        results = loop.run_until_complete(
             asyncio.gather(
                 Employee.get_list(offset=part1),
                 Employee.get_list(offset=part2),
@@ -80,20 +81,12 @@ class Application(tk.Frame):
                 Employee.get_list(offset=part5),
             )
         )
-        loop.run_until_complete(
-            asyncio.gather(
-                self.build_table_part(result[0]),
-                self.build_table_part(result[1]),
-                self.build_table_part(result[2]),
-                self.build_table_part(result[3]),
-                self.build_table_part(result[4]),
-            )
-        )
-        loop.close()
+        for result in results:
+            self.build_table_part(result)
 
-    async def build_table_part(self, employees):
+    def build_table_part(self, employees):
         for employee in employees:
-            await self.table.build_raw(
+            self.table.build_raw(
                 employee.id,
                 f'{employee.last_name} {employee.first_name}',
                 employee.subdivision.name,
