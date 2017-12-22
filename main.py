@@ -55,7 +55,26 @@ class Application(tk.Frame):
     def on_search(self):
         search_text = self.entry.get()
         self.table.clear()
-        for employee in Employee.get_list():
+        number = Employee.number_employees()
+        part1 = 0
+        part2 = number / 5 + part1
+        part3 = number / 5 + part2
+        part4 = number / 5 + part3
+        part5 = number / 5 + part4
+        loop = asyncio.get_event_loop()
+        results = loop.run_until_complete(
+            asyncio.gather(
+                Employee.get_list(offset=part1),
+                Employee.get_list(offset=part2),
+                Employee.get_list(offset=part3),
+                Employee.get_list(offset=part4),
+                Employee.get_list(offset=part5),
+            )
+        )
+        employees = []
+        for res in results:
+            employees.extend(res)
+        for employee in employees:
             if search_text in employee.subdivision.name:
                 self.table.build_raw(
                     employee.id,
