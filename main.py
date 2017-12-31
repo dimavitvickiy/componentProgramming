@@ -3,8 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import asyncio
-
-import time
+from tkinter.ttk import Notebook
 
 from add_employee_component import AddEmployeeComponent
 from config import UKRAINIAN_LANGUAGE, set_language, RUSSIAN_LANGUAGE, get_language
@@ -158,6 +157,11 @@ async def async_generator(generator):
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-
-    app = Application()
-    app.mainloop()
+    root = tk.Tk()
+    note = Notebook(root)
+    tab1 = Application(note)
+    tab2 = tk.Frame(note)
+    note.add(tab1, text='Main app')
+    note.add(tab2, text='Additional tab')
+    note.grid()
+    root.mainloop()
